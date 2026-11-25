@@ -1,0 +1,9 @@
+Crypto Custody - Existing Policy Notes (illustrative sample)
+
+Storage: Client assets are held in segregated wallets. At least 95% of assets stay in cold storage; the hot wallet holds only the amount needed for expected daily withdrawals. Private keys are generated and kept inside hardware security modules, and signing uses multi-party computation so no single person or server holds a complete key.
+
+Withdrawals: Withdrawals are sent only to whitelisted addresses. A newly added address has a 24-hour cooling period before it can receive funds, and the client is notified when an address is added. Withdrawals above a set value need approval from two authorised operators.
+
+Signing service: The trading desk calls an internal signing API to move funds between wallets. The API must be available around the clock, log every request, and reject anything that violates policy limits.
+
+Client app: Retail clients use a mobile wallet app to view balances, receive funds and request withdrawals. The business expects frequent changes to its screens and features as it learns from user feedback.

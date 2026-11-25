@@ -1,0 +1,11 @@
+DeFi Lending Platform - Existing Policy Notes (illustrative sample)
+
+Withdrawals: Standard withdrawals below 10,000 USDC equivalent are processed instantly by the smart contract once collateral health checks pass. Large withdrawals above this threshold have historically been a source of incidents when a single compromised key authorized a transfer. The business wants additional friction for high-value transfers without harming normal users.
+
+Collateralization: Borrowers must maintain a minimum collateralization ratio. If the ratio falls below the liquidation threshold, the protocol liquidates part of the position. Oracle price feeds drive this calculation, so any delay or manipulation of the price feed directly affects user funds.
+
+Interest rates: Rates float based on pool utilization and are recalculated on every block. Rate changes must be visible to users before they confirm a transaction so they are not surprised by slippage.
+
+Auditability: All lending pool parameter changes (collateral factors, liquidation thresholds, interest rate curves) must be logged with the proposer identity and timestamp for later audit.
+
+Users: Lenders and borrowers want to see their positions, health factor and accrued interest in the app. The interface is expected to evolve as the team gathers feedback.

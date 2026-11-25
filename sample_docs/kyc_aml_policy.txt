@@ -1,0 +1,13 @@
+Blockchain KYC / AML - Existing Policy Notes (illustrative sample)
+
+Customer onboarding: New users must complete identity verification before any wallet linked to their account can send funds off-platform. Verification tiers determine daily and monthly transfer limits.
+
+Travel Rule: When a transaction moves value between two virtual-asset service providers above the jurisdictional threshold, originator and beneficiary information must be collected and shared with the counterparty institution before the transfer settles.
+
+Sanctions screening: Wallet addresses are screened against sanctions lists at onboarding and periodically thereafter. A positive match freezes outbound transfers pending manual compliance review.
+
+Record retention: Identity verification records and transaction monitoring alerts must be retained for the period required by local regulation and made available to auditors and regulators on request.
+
+Suspicious activity reporting: Confirmed suspicious activity must be reported to the regulator within the deadline set by law. The report format and review workflow are prescribed by the regulator and change rarely; every report needs sign-off from the compliance officer.
+
+Reusable identity: The business is evaluating reusable digital identity credentials issued by trusted providers so customers need not repeat verification at each service. Standards and regulatory acceptance are still evolving.

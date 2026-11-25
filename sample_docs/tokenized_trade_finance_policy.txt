@@ -1,0 +1,9 @@
+Tokenized Trade Finance - Existing Policy Notes (illustrative sample)
+
+Letters of credit: Letters of credit are issued between a small group of consortium banks on a permissioned ledger. The terms follow established international documentary-credit rules and have been stable for years. Any change to the process needs sign-off from every member bank and the consortium's legal team.
+
+Documents: Trade documents such as invoices and bills of lading are hashed and anchored on the ledger so that later tampering can be detected. Shipment status arrives from logistics partners through external data feeds whose formats and reliability vary.
+
+Invoice financing: Exporters can tokenize approved invoices so that several investors can each fund part of an invoice. Investors are repaid when the importer pays. The product is new, and the business expects to adjust its features after pilot feedback.
+
+Settlement and disputes: Payment is settled between banks once documents are accepted. Disputes over discrepancies are handled through a defined review process and every decision must be recorded.

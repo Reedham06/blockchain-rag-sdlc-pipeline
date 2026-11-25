@@ -1,0 +1,9 @@
+Stablecoin Issuance - Existing Policy Notes (illustrative sample)
+
+Reserves: Every token in circulation must be backed 1:1 by cash and short-term government securities held with segregated, regulated custodians. New tokens may be minted only after the matching reserve deposit has been confirmed by two independent officers.
+
+Redemption: Holders can redeem at par. Redemption requests are honoured within one business day, and the corresponding tokens are burned on-chain before fiat is released.
+
+Attestation: An independent firm attests to reserve balances every month, and the summary is published to token holders and the regulator within five business days of month end. The format and content of the report are fixed by the regulator.
+
+Market stress: If the market price stays more than 1% away from the peg for 15 minutes, minting must pause and the risk committee must be alerted. The business is also researching an algorithmic supply-adjustment mechanism to supplement reserves; its behaviour under stress is not yet well understood.

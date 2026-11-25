@@ -1,0 +1,11 @@
+Cross-Border Payments - Existing Policy Notes (illustrative sample)
+
+FX quotes: Customers must see a firm exchange-rate quote before they confirm a transfer. A quote is valid for 30 seconds; after that the customer must request a new one. The fee and the final amount received must be shown on the same screen as the rate.
+
+Settlement: Value moves between the sending and receiving corridors over stablecoin rails. The sender's funds are converted to a USD stablecoin, transferred on-chain, and converted into local currency by a licensed partner in the receiving country. Target end-to-end settlement time is under 5 minutes.
+
+Failures and refunds: If a transfer cannot complete, the sender must be refunded automatically within 24 hours and informed by notification. Operations staff reconcile on-chain transfers against partner bank ledgers every day, and any unmatched item is escalated the same day.
+
+Compliance: Transfers above the corridor threshold require originator and beneficiary data to be exchanged with the receiving provider before settlement. Counterparties must be on the approved provider list.
+
+Customers: Many remittance users have limited digital literacy and use low-end phones. The app must support several local languages, show a clear status for every transfer, and send SMS updates when connectivity is poor.

@@ -1,0 +1,9 @@
+CBDC - Existing Policy Notes (illustrative sample)
+
+Wallets and limits: The central bank issues a retail digital currency through licensed intermediaries. Wallets are tiered by identity verification level, and each tier has a maximum balance and a daily transaction limit. Small payments should preserve user privacy, while larger payments must be traceable to authorised authorities.
+
+Offline payments: The central bank wants citizens in low-connectivity regions to pay without a live network connection. The technology and risk model for offline value transfer are still being explored through pilots.
+
+Interbank settlement: Intermediaries settle with the central bank through the existing real-time gross settlement (RTGS) system. The interface specification is fixed by the central bank, and any change goes through a formal approval process.
+
+Programmable payments: Policymakers are studying conditional payments, such as time-limited subsidies. Operating targets are 99.99% availability and at least 2,000 transactions per second at peak.

@@ -1,0 +1,27 @@
+# Fine-tuned models: ~2 GB each, far above GitHub's 100 MB file limit (they are rebuilt by finetune_colab.ipynb)
+exports/
+*.gguf
+*.safetensors
+*.bin
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Secrets and local settings
+.env
+*.key
+
+# Colab / Unsloth / editor / OS leftovers
+unsloth_compiled_cache/
+.ipynb_checkpoints/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Downloaded zips and CLI output files
+*.zip
+result.json
