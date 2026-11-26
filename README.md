@@ -31,9 +31,9 @@ consensus/finality, oracles, bridges and on-chain/off-chain data) shape the inta
    evidence and pending human-approval status.
 6. **Explainable SDLC selection:** LLM 2 infers low/medium/high project ratings from the use case, stakeholder
    interviews and answers, requirements, specialist reviews and retrieved evidence. A deterministic weighted
-   decision matrix ranks SDLC approaches from those inferred ratings; LLM 2's own SDLC suggestion is advisory and
-   does not overrule the matrix. The inferred profile is displayed for review. Scores are relative fit points, not
-   probabilities.
+   decision matrix ranks Waterfall, V-Model, Spiral, Agile, Incremental, and RAD from those inferred ratings;
+   LLM 2's own suggestion is advisory and does not overrule the matrix. The inferred profile is displayed for
+   review. Scores are relative fit points, not probabilities.
 7. **Project artifacts:** SRS, user stories, use cases, process/data/interface requirements, a risk register,
    compliance-control matrix, assumptions/dependencies, open issues and a requirements traceability matrix. The
    selected SDLC gets phases with roles, activities, deliverables, validation gates, security/compliance activities,
@@ -73,6 +73,7 @@ events are recorded in the local audit database; masking is not guaranteed anony
 The website's **Coordinated agent team** panel labels each entry as `LLM`, `Rule-based`, `Weighted matrix + LLM
 explanation`, or `Human reviewer`. The security/privacy and compliance/governance agents return separate finding
 lists; the SDLC prompt receives those lists, and the website displays their findings and linked evidence IDs.
+The SDLC selector considers six approaches: Waterfall, V-Model, Spiral, Agile, Incremental and RAD.
 
 ### CLI
 

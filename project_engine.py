@@ -265,7 +265,7 @@ def ranked_sdlc(project_factors: Optional[dict]) -> List[dict]:
     f = normalize_project_factors(project_factors)
     scores = {
         "Waterfall": 0.0, "V-Model": 0.0, "Spiral": 0.0, "Agile": 0.0,
-        "DevSecOps": 0.0, "Agile-V-Model Hybrid": 0.0, "DevSecOps-V-Model Hybrid": 0.0,
+        "Incremental": 0.0, "RAD": 0.0,
     }
     weights = {
         "requirement_stability": 1.0, "regulatory_criticality": 1.2, "security_risk": 1.2,
@@ -287,19 +287,18 @@ def ranked_sdlc(project_factors: Optional[dict]) -> List[dict]:
         "Agile": {"change_frequency": (0, 1, 2), "stakeholder_availability": (0, 1, 2),
                   "continuous_delivery": (0, 1, 2), "requirement_stability": (2, 1, 0),
                   "budget_schedule": (0, 1, 2)},
-        "DevSecOps": {"security_risk": (0, 1, 2), "continuous_delivery": (0, 1, 2),
-                      "verification_need": (0, 1, 2), "legacy_dependency": (0, 1, 2),
-                      "project_complexity": (0, 1, 2), "system_size": (0, 1, 2),
-                      "stakeholder_availability": (0, 1, 2)},
+        "Incremental": {"project_complexity": (0, 1, 2), "system_size": (0, 1, 2),
+                        "legacy_dependency": (0, 1, 2), "change_frequency": (0, 1, 2),
+                        "continuous_delivery": (0, 1, 2), "stakeholder_availability": (0, 1, 2),
+                        "requirement_stability": (2, 1, 0)},
+        "RAD": {"project_complexity": (2, 1, 0), "system_size": (2, 1, 0),
+                "change_frequency": (0, 1, 2), "stakeholder_availability": (0, 1, 2),
+                "budget_schedule": (0, 1, 2), "continuous_delivery": (0, 1, 2)},
     }
     levels = {"low": 0, "medium": 1, "high": 2}
     for method, matrix in fit.items():
         scores[method] = sum(weights[key] * matrix[key][levels[f[key]]] for key in matrix)
-    scores["Agile-V-Model Hybrid"] = 0.70 * scores["Agile"] + 0.70 * scores["V-Model"]
-    scores["DevSecOps-V-Model Hybrid"] = 0.70 * scores["DevSecOps"] + 0.70 * scores["V-Model"]
     criteria = {name: list(matrix) for name, matrix in fit.items()}
-    criteria["Agile-V-Model Hybrid"] = list(dict.fromkeys(criteria["Agile"] + criteria["V-Model"]))
-    criteria["DevSecOps-V-Model Hybrid"] = list(dict.fromkeys(criteria["DevSecOps"] + criteria["V-Model"]))
     max_score = max(scores.values()) or 1
     ranked = sorted(scores.items(), key=lambda item: (-item[1], item[0]))
     return [{
@@ -343,29 +342,19 @@ WORKFLOW_PHASES = {
         ("Review and acceptance", "Product owner, users, compliance as needed", "Demo, feedback, accepted/rejected stories", "Human acceptance of high-risk stories"),
         ("Secure release and monitoring", "Release manager, operations, security", "Release notes, monitoring and rollback plan", "Compliance and production approval"),
     ],
-    "DevSecOps": [
-        ("Plan and govern", "Product owner, risk, compliance, security", "Backlog, control plan and traceability", "Risk and compliance review"),
-        ("Design and threat model", "Architect, security/privacy, contract engineers", "Threat model, trust boundaries and design", "Threat-model approval"),
-        ("Implement with secure CI", "Developers, platform security", "Versioned code, static analysis, dependency scan", "Signed build and peer review"),
-        ("Validate on test networks", "QA, security, operations, integration teams", "Fuzz/property, integration and transaction tests", "Critical findings resolved"),
-        ("Approve and deploy", "Release manager, security, compliance, authorised owner", "Deployment manifest, rollback and audit bundle", "Human production approval"),
-        ("Monitor, respond and improve", "Operations, security operations, incident lead", "Alerts, incident records and post-release metrics", "Incident and control review"),
+    "Incremental": [
+        ("Define the product baseline and increments", "Product owner, business analyst, architect", "Prioritised scope, increment plan and traceability baseline", "Scope and dependency approval"),
+        ("Design the first usable increment", "Architect, developers, security and privacy leads", "Increment architecture, interfaces and threat review", "Design and security review"),
+        ("Build and verify an increment", "Developers, smart-contract engineers, QA", "Working increment, tests and linked requirement evidence", "Peer review and increment acceptance tests"),
+        ("Integrate with previous increments", "Integration lead, QA, operations", "Integrated release candidate and regression results", "End-to-end, security and compatibility checks"),
+        ("Release and plan the next increment", "Product owner, release manager, compliance, operations", "Approved release, monitoring and next increment backlog", "Human release approval and lessons learned"),
     ],
-    "Agile-V-Model Hybrid": [
-        ("Prioritised blockchain backlog", "Product owner, business analyst, stakeholders", "Prioritised stories, measurable acceptance criteria and requirement-test links", "Product-owner and compliance review"),
-        ("Sprint design and threat analysis", "Team, architect, security/privacy leads", "Increment design, threat model and test design", "Security review before implementation"),
-        ("Incremental smart-contract implementation", "Contract engineers, developers, QA", "Reviewed increment, CI evidence and trace links", "Peer review, static analysis and contract unit tests"),
-        ("V-Model verification levels", "Independent QA, security testers, contract engineers", "Property/invariant, integration, recovery and acceptance test evidence", "Required findings resolved with signed test evidence"),
-        ("Sprint acceptance and controlled release", "Product owner, project manager, compliance and release manager", "Accepted increment, release record and rollback plan", "Human acceptance and production approval"),
-    ],
-    "DevSecOps-V-Model Hybrid": [
-        ("Governed backlog and verification planning", "Product owner, project manager, compliance, QA", "Baselined controls, stories and requirements-to-test matrix", "Requirement and compliance owner approval"),
-        ("Architecture and threat modelling", "Architect, security/privacy leads, smart-contract engineers", "Trust-boundary model, contract design and verification plan", "Architecture and threat-model approval"),
-        ("Secure implementation pipeline", "Developers, platform security, contract engineers", "Signed build, code review, static and dependency scan results", "Peer review and pipeline security gate"),
-        ("Formal and property-based contract verification", "Independent QA, security testers, contract engineers", "Invariants, property/fuzz results and traceable test evidence", "Independent security approval for critical findings"),
-        ("Integration, transaction and failure validation", "QA, operations, oracle/bridge integration owners", "Finality, replay, reconciliation, recovery and integration tests", "Transaction-integrity and recovery gates"),
-        ("Compliance-approved deployment", "Release manager, security, compliance, project manager", "Deployment manifest, audit bundle and rollback plan", "Separate human production-readiness approvals"),
-        ("Monitor and improve", "Operations, security operations, incident lead", "Monitoring, incident evidence and updated risk register", "Post-release control and incident review"),
+    "RAD": [
+        ("Agree scope, constraints and prototype goals", "Product owner, users, business analyst", "Time-boxed scope, prototype objectives and acceptance measures", "Stakeholder approval of time box"),
+        ("Co-design and prototype workflows", "Users, designers, business analyst, developers", "Reviewed interface and process prototypes", "Stakeholder feedback and scope confirmation"),
+        ("Build time-boxed components", "Developers, integration team, QA", "Reusable components and working application increment", "Component and interface verification"),
+        ("Integrate and validate the application", "Developers, QA, security/privacy reviewers", "Integrated build, test evidence and resolved prototype feedback", "Security, data and acceptance testing"),
+        ("Deploy and transition to operations", "Release manager, operations, product owner", "User guidance, support plan, monitoring and release record", "Operational readiness and human release approval"),
     ],
 }
 

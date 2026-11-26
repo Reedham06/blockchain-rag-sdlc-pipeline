@@ -33,17 +33,16 @@ MIN_EVIDENCE_SCORE = 0.02      # chunks scoring below this are treated as irrele
 MIN_GROUNDING = 0.10           # requirement/evidence similarity below this => flag for human review
 
 SDLC_LABELS = [
-    "Waterfall", "V-Model", "Spiral", "Agile", "DevSecOps",
-    "Agile-V-Model Hybrid", "DevSecOps-V-Model Hybrid",
+    "Waterfall", "V-Model", "Spiral", "Agile", "Incremental", "RAD",
 ]
 
 SDLC_HEURISTICS = """Reference SDLC heuristics:
 - Stable requirements and extensive approvals needed -> Waterfall
 - Strict verification and validation needed (e.g. formally verified logic) -> V-Model
 - High uncertainty or technical risk -> Spiral
-- Frequently changing requirements -> Agile
-- Continuous secure deployment with rigorous automated security testing -> DevSecOps
-- High regulation with evolving requirements and high-stakes deployment -> Agile-V-Model or DevSecOps hybrid"""
+- Frequently changing requirements and close stakeholder feedback -> Agile
+- Large work that can be delivered and validated in independent increments -> Incremental
+- Small-to-medium, time-constrained applications with available stakeholders and rapid prototyping -> RAD"""
 
 STAGE1_SCHEMA = """Return ONLY strict JSON (no markdown fences):
 {
@@ -65,7 +64,7 @@ STAGE2_SCHEMA = """Return ONLY strict JSON (no markdown fences). Infer project c
    "stakeholder_availability": "low|medium|high", "verification_need": "low|medium|high",
    "failure_impact": "low|medium|high", "budget_schedule": "low|medium|high"
  },
- "recommended_sdlc": "highest-ranked model unless there is a specific evidence-based reason to challenge it",
+ "recommended_sdlc": "one of Waterfall, V-Model, Spiral, Agile, Incremental, or RAD",
  "key_factors": ["3-4 inferred project characteristics that drove this choice"],
  "justification": "a software-engineering justification paragraph, briefly noting why the main alternative(s) fit less well"
 }"""
@@ -324,9 +323,31 @@ def normalize_sdlc(raw: dict) -> dict:
         if invalid:
             detail.append("invalid levels for: " + ", ".join(invalid))
         raise LLMError("SDLC agent did not provide all valid low/medium/high project ratings (" + "; ".join(detail) + "). Retry or use another model.")
+    recommendation = sanitize_prompt_text(
+        str(_get(raw, "recommended_sdlc", "sdlc", "model", default="")).strip()
+    )
+    legacy_recommendations = {
+        "devsecops": "Incremental",
+        "agile-v-model hybrid": "Agile",
+        "devsecops-v-model hybrid": "V-Model",
+    }
+    recommendation_note = ""
+    if recommendation.casefold() in legacy_recommendations:
+        original_recommendation = recommendation
+        recommendation = legacy_recommendations[recommendation.casefold()]
+        recommendation_note = (
+            f"The model returned legacy suggestion '{original_recommendation}', which is no longer offered; "
+            f"its advisory suggestion was mapped to {recommendation}."
+        )
+    elif recommendation.casefold() not in {label.casefold() for label in SDLC_LABELS}:
+        raise LLMError(
+            "SDLC agent must recommend one of: " + ", ".join(SDLC_LABELS) + ". Retry or use another model."
+        )
+    recommendation = next(label for label in SDLC_LABELS if label.casefold() == recommendation.casefold())
     return {
         "project_factors": {key: str(project_factors[key]).strip().lower() for key in FACTOR_KEYS},
-        "recommended_sdlc": sanitize_prompt_text(str(_get(raw, "recommended_sdlc", "sdlc", "model", default="")).strip()),
+        "recommended_sdlc": recommendation,
+        "recommendation_note": recommendation_note,
         "key_factors": [sanitize_prompt_text(str(f)) for f in key_factors if str(f).strip()],
         "justification": sanitize_prompt_text(str(_get(raw, "justification", "reasoning", default="")).strip()),
     }
@@ -402,6 +423,7 @@ def identify_sdlc(domain: str, requirements: List[dict], evidence: List[dict], l
         "key_factors": inferred["key_factors"],
         "justification": inferred["justification"],
         "llm_suggestion": inferred["recommended_sdlc"],
+        "recommendation_note": inferred["recommendation_note"],
         "llm_agrees_with_ranking": inferred["recommended_sdlc"].casefold() == preferred.casefold(),
         "decision_method": "LLM-inferred project ratings followed by an explainable weighted decision matrix; human approval required",
     }

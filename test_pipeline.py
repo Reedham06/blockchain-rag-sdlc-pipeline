@@ -60,7 +60,7 @@ LLM2_REPLY = {
         "change_frequency": "high", "continuous_delivery": "high", "stakeholder_availability": "high",
         "verification_need": "high", "failure_impact": "high", "budget_schedule": "medium",
     },
-    "recommended_sdlc": "DevSecOps-V-Model Hybrid", "key_factors": ["security_risk", "verification_need"],
+    "recommended_sdlc": "V-Model", "key_factors": ["security_risk", "verification_need"],
     "justification": "High assurance is required.",
 }
 
@@ -109,7 +109,7 @@ class FlowTests(unittest.TestCase):
         self.assertIn("REQ-001", llm2_prompt)                                    # ...and receives the requirements
         self.assertIn("[E1]", llm2_prompt)                                       # ...plus the evidence
         self.assertIn("Independent specialist-agent reviews", llm2_prompt)
-        self.assertEqual(result["sdlc"]["recommended_sdlc"], "DevSecOps-V-Model Hybrid")
+        self.assertEqual(result["sdlc"]["recommended_sdlc"], "V-Model")
         self.assertEqual(result["project_factors"], LLM2_REPLY["project_factors"])
         self.assertEqual(result["evidence"][0]["source"], "defi_lending_policy.txt")
 
@@ -141,6 +141,16 @@ class FlowTests(unittest.TestCase):
         self.assertEqual(normalized["project_factors"], LLM2_REPLY["project_factors"])
         with self.assertRaises(LLMError):
             pipeline.normalize_sdlc({"recommended_sdlc": "Agile", "project_factors": {}})
+        legacy = pipeline.normalize_sdlc({
+            "recommended_sdlc": "DevSecOps-V-Model Hybrid",
+            "project_factors": LLM2_REPLY["project_factors"],
+        })
+        self.assertEqual(legacy["recommended_sdlc"], "V-Model")
+        self.assertIn("no longer offered", legacy["recommendation_note"])
+        with self.assertRaises(LLMError):
+            pipeline.normalize_sdlc({
+                "recommended_sdlc": "Unsupported", "project_factors": LLM2_REPLY["project_factors"],
+            })
 
     def test_model_with_no_usable_output_raises_clear_error(self):
         r = pipeline.build_index(pipeline.load_documents(DOCS))
@@ -220,13 +230,16 @@ class BlockchainAgentTests(unittest.TestCase):
             "verification_need": "high", "failure_impact": "high", "budget_schedule": "medium",
         }
         ranked = ranked_sdlc(factors)
-        self.assertEqual(len(ranked), 7)
+        self.assertEqual({item["model"] for item in ranked}, set(pipeline.SDLC_LABELS))
+        self.assertEqual(len(ranked), 6)
         self.assertTrue(ranked[0]["recommended"])
         self.assertTrue(all(0 <= item["score_percent"] <= 100 for item in ranked))
         workflow = generate_workflow(ranked[0]["model"])
         self.assertTrue(workflow["phases"])
         self.assertTrue(all(p["responsible_roles"] and p["deliverables"] for p in workflow["phases"]))
         self.assertTrue(any(p["human_approval_required"] for p in workflow["phases"]))
+        for model in pipeline.SDLC_LABELS:
+            self.assertTrue(generate_workflow(model)["phases"])
 
     def test_agent_outputs_include_risks_controls_and_traceability(self):
         requirements = [{
@@ -328,6 +341,10 @@ class DatasetAndFinetuneTests(unittest.TestCase):
             for row in s2
         }
         self.assertGreater(len(profiles), 1)
+        labels = {json.loads(json.loads(row)["messages"][2]["content"])["recommended_sdlc"] for row in s2}
+        self.assertEqual(labels, set(pipeline.SDLC_LABELS))
+        self.assertIn("Incremental", labels)
+        self.assertIn("RAD", labels)
         user1 = json.loads(s1[0])["messages"][1]["content"]
         self.assertIn("Evidence retrieved from the existing requirement documents", user1)
         self.assertIn(pipeline.STAGE1_SCHEMA, user1)
@@ -427,8 +444,9 @@ class WebApiTests(unittest.TestCase):
                                          "requirements": r2["requirements"],
                                          "agent_reviews": r2["agent_reviews"], "provider": "ollama"})
         self.assertEqual(s, 200)
-        self.assertEqual(r3["sdlc"]["recommended_sdlc"], "DevSecOps-V-Model Hybrid")
-        self.assertEqual(len(r3["sdlc"]["ranked_recommendations"]), 7)
+        self.assertEqual(r3["sdlc"]["recommended_sdlc"], "V-Model")
+        self.assertEqual({item["model"] for item in r3["sdlc"]["ranked_recommendations"]},
+                         set(pipeline.SDLC_LABELS))
         self.assertEqual(len(r2["agent_reviews"]), 2)
         self.assertEqual(r3["agent_reviews"], r2["agent_reviews"])
         self.assertIn("traceability_matrix", r3["artifacts"])
@@ -594,7 +612,7 @@ class OllamaProtocolTests(unittest.TestCase):
                               "--functionality", "Multi-signature approval for large withdrawals"],
                              capture_output=True, text=True, env=env, timeout=60)
         self.assertEqual(run.returncode, 0, run.stderr)
-        self.assertIn("Recommended: DevSecOps-V-Model Hybrid", run.stdout)
+        self.assertIn("Recommended: V-Model", run.stdout)
         self.assertIn("NEEDS HUMAN REVIEW", run.stdout)
         models = [c["model"] for c in FakeOllamaHandler.chat_calls]
         self.assertEqual(models, ["blockchain-req-llm", "blockchain-req-llm",

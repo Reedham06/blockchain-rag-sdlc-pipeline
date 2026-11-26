@@ -360,9 +360,12 @@ async function runPipeline() {
       `<span class="badge alt">${esc(name.replace(/_/g, ' '))}: ${esc(level)}</span>`).join(' ');
     $('factors').innerHTML = r3.sdlc.key_factors.map(f => `<li>${esc(f)}</li>`).join('');
     $('justification').textContent = r3.sdlc.justification;
-    $('sdlcMismatch').textContent = r3.sdlc.llm_agrees_with_ranking
-      ? 'Language-model explanation agrees with the deterministic ranking.'
-      : `Model suggested ${r3.sdlc.llm_suggestion}; the explainable matrix ranks ${r3.sdlc.recommended_sdlc} first. Human review is required.`;
+    $('sdlcMismatch').textContent = [
+      r3.sdlc.recommendation_note,
+      r3.sdlc.llm_agrees_with_ranking
+        ? 'Language-model explanation agrees with the deterministic ranking.'
+        : `Model suggested ${r3.sdlc.llm_suggestion}; the explainable matrix ranks ${r3.sdlc.recommended_sdlc} first. Human review is required.`,
+    ].filter(Boolean).join(' ');
     $('ranked').innerHTML = (r3.sdlc.ranked_recommendations || []).map(r =>
       `<div class="item"><b>${esc(r.model)}</b> &mdash; ${esc(r.score_percent)} relative fit points
       ${r.recommended ? '<span class="badge">Top ranked</span>' : ''}<div class="meta">Matrix score: ${esc(r.raw_score)}; high factors: ${esc(r.selection_factors.join(', '))}</div></div>`).join('');
