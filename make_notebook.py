@@ -15,9 +15,11 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 DELIM = "__END_OF_FILE__"
 
 # needed for training
-TRAIN_FILES = ["retriever.py", "llm_clients.py", "pipeline.py", "seed_data.py", "generate_dataset.py", "finetune_llm.py"]
+TRAIN_FILES = ["retriever.py", "llm_clients.py", "project_engine.py", "agent_team.py",
+               "pipeline.py", "seed_data.py", "generate_dataset.py", "finetune_llm.py"]
 # the rest of the project (optional: lets Colab hand you the complete project as one zip)
-EXTRA_FILES = ["web_app.py", "main.py", "install_models.py", "make_notebook.py", "test_pipeline.py", "requirements.txt", "README.md"]
+EXTRA_FILES = ["web_app.py", "main.py", "access_control.py", "audit_store.py", "install_models.py",
+               "make_notebook.py", "test_pipeline.py", "requirements.txt", "README.md", "EVALUATION.md"]
 
 
 def _read(rel: str) -> str:
@@ -30,14 +32,15 @@ def _read(rel: str) -> str:
 
 def _doc_files() -> list:
     return [os.path.join("sample_docs", n) for n in sorted(os.listdir(os.path.join(HERE, "sample_docs")))
-            if n.lower().endswith((".txt", ".md"))]
+            if n.lower().endswith((".txt", ".md", ".json"))]
 
 
 def bash_cell(files: list) -> str:
     """One `%%bash` cell that writes every file with a quoted heredoc."""
     lines = ["%%bash", "set -e", "mkdir -p sample_docs"]
     for rel in files:
-        lines += [f"cat > {rel} << '{DELIM}'", _read(rel).rstrip("\n"), DELIM]
+        notebook_path = rel.replace("\\", "/")
+        lines += [f"cat > {notebook_path} << '{DELIM}'", _read(rel).rstrip("\n"), DELIM]
     lines.append('echo "Created $(ls | wc -l) items:"; ls')
     return "\n".join(lines)
 
@@ -82,7 +85,7 @@ Remove the `#` at the start of the three lines, run the cell, and choose your `s
         _md("### 7. Fine-tune LLM 1 (Llama-3.2-3B -> requirements). Roughly 10-30 minutes including the GGUF export."),
         _code("""!python finetune_llm.py --stage 1
 !rm -rf exports/blockchain-req-llm_gguf_work exports/blockchain-req-llm_checkpoints   # free disk space"""),
-        _md("### 8. Fine-tune LLM 2 (Qwen2.5-3B -> SDLC only)"),
+        _md("### 8. Fine-tune LLM 2 (Qwen2.5-3B -> infer project characteristics and recommend SDLC)"),
         _code("""!python finetune_llm.py --stage 2
 !rm -rf exports/blockchain-sdlc-llm_gguf_work exports/blockchain-sdlc-llm_checkpoints"""),
         _md("""### 9. Get the two models out of Colab

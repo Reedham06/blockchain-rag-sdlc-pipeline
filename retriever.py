@@ -7,7 +7,7 @@ offline. To upgrade to neural embeddings later, keep the same three methods
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Optional, Tuple
 
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -19,6 +19,7 @@ class Chunk:
     text: str
     source: str
     chunk_id: str = ""
+    metadata: dict = field(default_factory=dict)
 
 
 def _windows(words: List[str], max_words: int, overlap: int):
@@ -29,7 +30,8 @@ def _windows(words: List[str], max_words: int, overlap: int):
             break
 
 
-def chunk_text(text: str, source: str, max_words: int = 120, overlap: int = 20) -> List[Chunk]:
+def chunk_text(text: str, source: str, max_words: int = 120, overlap: int = 20,
+               metadata: Optional[dict] = None) -> List[Chunk]:
     """Split on blank lines, merge short paragraphs up to `max_words`, and only
     fall back to overlapping word windows for a single over-long paragraph.
     Chunks therefore end on paragraph boundaries instead of mid-sentence."""
@@ -54,7 +56,8 @@ def chunk_text(text: str, source: str, max_words: int = 120, overlap: int = 20) 
         else:
             buf.extend(words)
     flush()
-    return [Chunk(text=p, source=source, chunk_id=f"{source}#{i + 1}") for i, p in enumerate(pieces)]
+    return [Chunk(text=p, source=source, chunk_id=f"{source}#{i + 1}", metadata=dict(metadata or {}))
+            for i, p in enumerate(pieces)]
 
 
 class TfidfRetriever:

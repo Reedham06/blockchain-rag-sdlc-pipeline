@@ -1,0 +1,44 @@
+{
+  "cbdc_policy.txt": {
+    "jurisdiction": "Illustrative only - not mapped to a jurisdiction",
+    "effective_date": "Not applicable - synthetic sample",
+    "version": "Sample 1.0",
+    "applicability": "Synthetic project example; not a legal or regulatory source"
+  },
+  "cross_border_payments_policy.txt": {
+    "jurisdiction": "Illustrative only - not mapped to a jurisdiction",
+    "effective_date": "Not applicable - synthetic sample",
+    "version": "Sample 1.0",
+    "applicability": "Synthetic project example; not a legal or regulatory source"
+  },
+  "crypto_custody_policy.txt": {
+    "jurisdiction": "Illustrative only - not mapped to a jurisdiction",
+    "effective_date": "Not applicable - synthetic sample",
+    "version": "Sample 1.0",
+    "applicability": "Synthetic project example; not a legal or regulatory source"
+  },
+  "defi_lending_policy.txt": {
+    "jurisdiction": "Illustrative only - not mapped to a jurisdiction",
+    "effective_date": "Not applicable - synthetic sample",
+    "version": "Sample 1.0",
+    "applicability": "Synthetic project example; not a legal or regulatory source"
+  },
+  "kyc_aml_policy.txt": {
+    "jurisdiction": "Illustrative only - not mapped to a jurisdiction",
+    "effective_date": "Not applicable - synthetic sample",
+    "version": "Sample 1.0",
+    "applicability": "Synthetic project example; not a legal or regulatory source"
+  },
+  "stablecoin_reserve_policy.txt": {
+    "jurisdiction": "Illustrative only - not mapped to a jurisdiction",
+    "effective_date": "Not applicable - synthetic sample",
+    "version": "Sample 1.0",
+    "applicability": "Synthetic project example; not a legal or regulatory source"
+  },
+  "tokenized_trade_finance_policy.txt": {
+    "jurisdiction": "Illustrative only - not mapped to a jurisdiction",
+    "effective_date": "Not applicable - synthetic sample",
+    "version": "Sample 1.0",
+    "applicability": "Synthetic project example; not a legal or regulatory source"
+  }
+}

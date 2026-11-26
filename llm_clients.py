@@ -1,6 +1,6 @@
 """LLM clients.
 
-Default setup = two *different* local Ollama models, one per LLM step:
+Default setup = two *different* local Ollama models for blockchain requirements and SDLC selection:
   LLM 1 (requirements)  -> fine-tuned `blockchain-req-llm`  if installed, else base `llama3.2:3b`
   LLM 2 (SDLC only)     -> fine-tuned `blockchain-sdlc-llm` if installed, else base `qwen2.5:3b`
 Gemini is available as an optional cloud alternative.

@@ -1,8 +1,8 @@
-"""Hand-authored seed data for fine-tuning (28 examples across 7 blockchain-finance domains).
+"""Hand-authored seed data for fine-tuning (28 examples across 7 blockchain/digital-asset domains).
 
 Each seed is ONE project scenario and feeds BOTH fine-tuning sets:
   * Stage 1 (LLM 1): domain + functionality + retrieved evidence  ->  requirements + reasoning
-  * Stage 2 (LLM 2): the same requirements + evidence             ->  SDLC model + factors + justification
+  * Stage 2 (LLM 2): requirements + evidence + project context    ->  inferred factors + SDLC model + justification
 
 The SDLC labels are deliberately varied (not always "hybrid"), following the heuristics in pipeline.py.
 These are illustrative training examples written for this project - review and edit them (and add your own,
@@ -40,7 +40,7 @@ SEEDS = [
       "Liquidations are driven by oracle prices, so delayed or manipulated prices can wrongly liquidate solvent users or leave the pool with bad debt. Cross-checking against a time-weighted average, handling stale feeds and logging parameter changes bound that risk.",
       "V-Model",
       ["Correctness-critical liquidation arithmetic", "Well-understood, stable liquidation rules", "Need for traceable test levels and evidence", "High cost of failure: bad debt and user losses"],
-      "The liquidation rules are well defined and rarely change, while a mistake causes direct financial loss. The V-Model pairs each requirement with a test level - invariant specification, unit and property tests, integration tests against oracle-failure scenarios - and yields the traceable evidence auditors expect. Agile iteration adds little for stable rules, and Spiral's risk loops are unnecessary for a known mechanism."),
+      "The liquidation rules are well defined and rarely change, while a mistake can directly lose user assets. The V-Model pairs each requirement with a test level - invariant specification, unit and property tests, integration tests against oracle-failure scenarios - and yields the traceable evidence auditors expect. Agile iteration adds little for stable rules, and Spiral's risk loops are unnecessary for a known mechanism."),
     S(DEFI, "Block-by-block interest rate recalculation with user slippage protection",
       [("Functional", "The pool contract shall recalculate borrow and supply rates on every block from the current utilization ratio."),
        ("Usability", "The interface shall display the projected effective rate before the user confirms a transaction."),
@@ -49,7 +49,7 @@ SEEDS = [
       "Rates float with utilization and can move within the same block, so users are surprised unless they see the rate first and can cap it. Bounded execution and parameter logging keep behaviour predictable and auditable.",
       "Agile-V-Model Hybrid",
       ["Rate-curve tuning expected to evolve with market data", "Core rate math needs rigorous verification", "Interface benefits from short feedback loops", "Parameter changes need audit evidence"],
-      "The user-facing rate display and curve parameters will be tuned frequently, which suits short Agile iterations, but the on-chain rate and slippage logic is financial code that needs V-Model style verification before each release. A hybrid lets the team iterate on the interface and parameters while holding contract changes to formal test gates."),
+      "The user-facing rate display and curve parameters will be tuned frequently, which suits short Agile iterations, but the on-chain rate and slippage logic is smart-contract code that needs V-Model style verification before each release. A hybrid lets the team iterate on the interface and parameters while holding contract changes to formal test gates."),
     S(DEFI, "Position and health-factor dashboard for lenders and borrowers",
       [("Functional", "The dashboard shall show each user's supplied and borrowed balances, current health factor and accrued interest, refreshed at least every 30 seconds."),
        ("Usability", "The dashboard shall show a colour-coded liquidation warning when the health factor falls below 1.5."),
@@ -147,7 +147,7 @@ SEEDS = [
       [("Regulatory", "The system shall produce the monthly reserve attestation summary in the regulator-prescribed format."),
        ("Functional", "The summary shall be published to token holders and delivered to the regulator within five business days of month end."),
        ("Auditability", "The system shall retain the attestation, source balances and publication logs for the required retention period."),
-       ("Security", "Only authorized finance officers shall be able to approve a report for publication, and a published report shall be immutable.")],
+       ("Security", "Only authorised protocol operations officers shall be able to approve a report for publication, and a published report shall be immutable.")],
       "The report content, format and deadline are set by the regulator. Controlled approval, immutability and retention make the published figures trustworthy and defensible.",
       "Waterfall",
       ["Format and deadline fixed by regulation", "Stable requirements with formal approvals", "Low technical risk", "Documentation-heavy deliverable"],
@@ -225,7 +225,7 @@ SEEDS = [
       "Splitting an invoice among investors creates obligations about who funded what and who is repaid. Proportional repayment, eligibility checks and a full ledger keep the product fair and auditable.",
       "Agile-V-Model Hybrid",
       ["New product expected to change after pilot feedback", "Token and repayment logic handles investor money", "Eligibility rules need verified enforcement", "Complete audit ledger needed"],
-      "Because the product is new and will be adjusted after pilots, short iterations help the team learn quickly. The token, payment and eligibility logic handles investor funds, so those components need V-Model style verification before each release. An Agile cadence with verification gates on the financial core fits."),
+      "Because the product is new and will be adjusted after pilots, short iterations help the team learn quickly. The token, payment and eligibility logic handles investor assets, so those components need V-Model style verification before each release. An Agile cadence with verification gates on the on-chain protocol core fits."),
     S(TF, "Bill of lading anchoring and shipment events from logistics feeds",
       [("Functional", "The system shall hash each bill of lading and anchor the hash on the ledger when it is received."),
        ("Integration", "The system shall ingest shipment events from logistics partner feeds and map them to a common event format."),
